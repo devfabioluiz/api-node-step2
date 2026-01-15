@@ -1,12 +1,18 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
+let client;
+let clientPromise;
+const uri = process.env.MONGODB_URI;
 
-const connectDatabase = async () => {
-  if (!process.env.MONGODB_URI) {
-    throw new Error('❌ MONGODB_URI não definida no .env');
-  }
+const options = {};
 
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log('✅ MongoDB conectado');
-};
+if (!process.env.MONGODB_URI) {
+  throw new Error("Por favor, defina a variável MONGODB_URI no ambiente.");
+}
 
-module.exports = connectDatabase;
+if (!client) {
+  client = new MongoClient(uri, options);
+  clientPromise = client.connect();
+}
+
+module.exports = clientPromise;
